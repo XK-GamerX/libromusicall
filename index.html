@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" type="x-icon" href="icon.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Libro Musical</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Botón de Créditos -->
+        <button class="credits-toggle" id="creditsToggle">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6,9 12,15 18,9"></polyline>
+            </svg>
+        </button>
+
+        <!-- Panel de Créditos -->
+        <div class="credits-panel" id="creditsPanel">
+            <div class="credits-panel-content">
+                <!-- Botón cerrar -->
+                <button class="credits-close-btn" id="creditsCloseBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+
+                <!-- Contenido de créditos -->
+                <div class="credits-content">
+                    <div class="credits-info">
+                        <p class="made-by">Web hecha por: <strong>Khel Palacios</strong></p>
+                        <div class="team-members">
+                            <p>Integrantes de grupo:</p>
+                            <ul>
+                                <li>Khel Palacios</li>
+                                <li>Luciana Aguilar</li>
+                                <li>Graciela Cárdenas</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Botón Playlist -->
+                    <div class="playlist-section">
+                        <a href="https://open.spotify.com/playlist/3ZoGDZAUjK6JGE3OGDaFA4?si=bb9027ba767f44b2" 
+                           target="_blank" 
+                           class="playlist-btn">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M8 14.5c1.5-1 4-1 5.5 0M8.5 12c2-1.5 5-1.5 7 0M9 9.5c2.5-2 6.5-2 9 0" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+                            </svg>
+                            Ver Playlist Completa
+                        </a>
+                    </div>
+
+                    <!-- Easter Egg -->
+                    <div class="easter-egg">
+                        <img src="src/imgs/egg.gif" alt="Easter Egg" class="egg-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenido Principal -->
+        <main class="main-content" id="mainContent">
+            <!-- Visor de Documento -->
+            <div class="document-container" id="documentContainer">
+                <div class="document-viewer" id="documentViewer">
+                    <!-- Loading state -->
+                    <div id="loadingState" class="loading-state">
+                        <div class="loading-spinner"></div>
+                        <p>Cargando "La chica 100% perfecta"...</p>
+                    </div>
+                    <!-- Contenido del texto -->
+                    <div id="textContent" class="text-content" style="display: none;"></div>
+                    <!-- Error state -->
+                    <div id="errorState" class="error-state" style="display: none;">
+                        <div class="error-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="15" y1="9" x2="9" y2="15"></line>
+                                <line x1="9" y1="9" x2="15" y2="15"></line>
+                            </svg>
+                        </div>
+                        <h3>Error al cargar el contenido</h3>
+                        <p>Hubo un problema al cargar el texto del cuento.</p>
+                        <button id="retryLoad" class="retry-btn">Intentar de nuevo</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Panel Reproductor Musical -->
+        <div class="music-panel" id="musicPanel">
+            <div class="music-panel-content">
+                <!-- Botón cerrar -->
+                <button class="close-btn" id="closeBtn">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+
+                <!-- Imagen del álbum (clickeable para Spotify) -->
+                <div class="album-art" id="albumArt">
+                    <img id="albumImage" src="" alt="Album Art" class="album-image">
+                    <div class="album-placeholder">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polygon points="10,8 16,12 10,16 10,8"></polygon>
+                        </svg>
+                    </div>
+                    <!-- Overlay de Spotify -->
+                    <div class="spotify-overlay">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 14.5c1.5-1 4-1 5.5 0M8.5 12c2-1.5 5-1.5 7 0M9 9.5c2.5-2 6.5-2 9 0" fill="none" stroke="currentColor" stroke-width="1.5"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Info de la canción -->
+                <div class="song-info">
+                    <h3 class="song-title" id="songTitle">Selecciona una frase</h3>
+                    <p class="song-artist" id="songArtist">Artista desconocido</p>
+                </div>
+
+                <!-- Controles de reproducción -->
+                <div class="playback-controls">
+                    <button class="play-btn" id="playBtn">
+                        <svg id="playIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5,3 19,12 5,21 5,3"></polygon>
+                        </svg>
+                        <svg id="pauseIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" style="display: none;">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                    </button>
+                    
+                    <!-- Botón de Explicación -->
+                    <button class="explanation-btn" id="explanationBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9,9a3,3 0 1,1 6,0c0,2-3,3-3,3"></path>
+                            <path d="M12,17h.01"></path>
+                        </svg>
+                        Explicación
+                    </button>
+                </div>
+
+                <!-- Control de Volumen -->
+                <div class="volume-section">
+                    <div class="volume-icon">
+                        <svg id="volumeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="11,5 6,9 2,9 2,15 6,15 11,19 11,5"></polygon>
+                            <path id="volumePath" d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                        </svg>
+                    </div>
+                    <div class="volume-bar" id="volumeBar">
+                        <div class="volume-fill" id="volumeFill"></div>
+                        <div class="volume-handle" id="volumeHandle"></div>
+                    </div>
+                </div>
+
+                <!-- Barra de progreso -->
+                <div class="progress-section">
+                    <div class="time-display">
+                        <span id="currentTime">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
+                    <div class="progress-bar" id="progressBar">
+                        <div class="progress-fill" id="progressFill"></div>
+                        <div class="progress-handle" id="progressHandle"></div>
+                    </div>
+                </div>
+
+                <!-- Audio element -->
+                <audio id="audioPlayer" preload="metadata"></audio>
+            </div>
+        </div>
+
+        <!-- Modal de Explicación -->
+        <div class="explanation-modal-overlay" id="explanationModalOverlay">
+            <div class="explanation-modal" id="explanationModal">
+                <div class="explanation-modal-header">
+                    <h2 id="explanationTitle">Explicación</h2>
+                    <button class="explanation-close-btn" id="explanationCloseBtn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                </div>
+                <div class="explanation-modal-content">
+                    <p id="explanationText">Selecciona una canción para ver su explicación.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overlay para móvil -->
+        <div class="mobile-overlay" id="mobileOverlay"></div>
+        
+        <!-- Overlay para panel de créditos -->
+        <div class="credits-overlay" id="creditsOverlay"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
