@@ -6,6 +6,9 @@ let isDragging = false;
 let isVolumeDragging = false;
 let textContent = '';
 
+// Audio player para efectos de sonido
+let splatAudio = null;
+
 // Referencias DOM
 const textContentDiv = document.getElementById('textContent');
 const musicPanel = document.getElementById('musicPanel');
@@ -54,6 +57,9 @@ const explanationModal = document.getElementById('explanationModal');
 const explanationCloseBtn = document.getElementById('explanationCloseBtn');
 const explanationTitle = document.getElementById('explanationTitle');
 const explanationText = document.getElementById('explanationText');
+
+// Referencia para el GIF del huevo (buscar por diferentes posibles IDs/clases)
+let eggGif = null;
 
 // ==================== TEXTO DEL CUENTO ====================
 const storyText = `Una bella mañana de abril, en una callecita lateral del elegante barrio de Harajuku en Tokio, me crucé con la chica 100% perfecta.
@@ -502,6 +508,39 @@ function escapeRegExp(string) {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+// ==================== BÚSQUEDA Y CONFIGURACIÓN DEL GIF DEL HUEVO ====================
+function findEggGif() {
+    // Buscar el GIF del huevo por diferentes posibles selectores
+    const possibleSelectors = [
+        '#eggGif',
+        '.egg-gif',
+        '[src*="egg.gif"]',
+        '[src*="egg"]',
+        'img[alt*="egg"]',
+        'img[alt*="huevo"]'
+    ];
+    
+    for (const selector of possibleSelectors) {
+        const element = document.querySelector(selector);
+        if (element) {
+            console.log(`🥚 GIF del huevo encontrado con selector: ${selector}`);
+            return element;
+        }
+    }
+    
+    // Si no se encuentra con selectores específicos, buscar todas las imágenes que contengan "egg" en el src
+    const allImages = document.querySelectorAll('img');
+    for (const img of allImages) {
+        if (img.src && img.src.toLowerCase().includes('egg')) {
+            console.log(`🥚 GIF del huevo encontrado por src: ${img.src}`);
+            return img;
+        }
+    }
+    
+    console.log('⚠️ No se encontró el GIF del huevo. Asegúrate de que tenga un ID, clase o src que contenga "egg"');
+    return null;
+}
+
 // ==================== EVENT LISTENERS ====================
 function setupEventListeners() {
     // Controles de música
@@ -567,6 +606,91 @@ function setupEventListeners() {
             closeExplanationModal();
         }
     });
+    
+    // ==================== CONFIGURAR GIF DEL HUEVO ====================
+    // Buscar el GIF del huevo
+    eggGif = findEggGif();
+    
+    // Event listener para el GIF del huevo
+    if (eggGif) {
+        eggGif.addEventListener('click', handleEggClick);
+        eggGif.style.cursor = 'pointer'; // Hacer que se vea clickeable
+        eggGif.title = 'Haz clic para un sonido sorpresa! 🥚';
+        console.log('✅ Event listener del huevo configurado correctamente');
+    }
+}
+
+// ==================== MANEJO DEL GIF DEL HUEVO ====================
+function handleEggClick() {
+    console.log('🥚 Huevo clickeado!');
+    
+    // Crear o reutilizar el audio del splat
+    if (!splatAudio) {
+        splatAudio = new Audio();
+        
+        // Intentar cargar desde diferentes rutas
+        const possiblePaths = [
+            'src/songs/splat.mp3',
+            'songs/splat.mp3',
+            'src/splat.mp3',
+            'splat.mp3'
+        ];
+        
+        let audioLoaded = false;
+        for (const path of possiblePaths) {
+            try {
+                splatAudio.src = path;
+                audioLoaded = true;
+                console.log(`✅ Audio splat configurado desde: ${path}`);
+                break;
+            } catch (error) {
+                console.log(`⚠️ No se pudo configurar splat desde: ${path}`);
+            }
+        }
+        
+        if (!audioLoaded) {
+            console.error('❌ No se encontró el archivo splat.mp3');
+            showError('No se encontró el archivo de sonido splat.mp3 en src/songs/');
+            return;
+        }
+        
+        // Configurar el audio
+        splatAudio.volume = 0.6; // Volumen moderado
+        splatAudio.preload = 'auto';
+        
+        // Manejar errores
+        splatAudio.addEventListener('error', (e) => {
+            console.error('❌ Error al cargar splat.mp3:', e);
+            showError('Error al cargar el sonido splat.mp3');
+        });
+        
+        // Evento cuando se carga correctamente
+        splatAudio.addEventListener('loadeddata', () => {
+            console.log('✅ Audio splat cargado correctamente');
+        });
+    }
+    
+    // Reproducir el sonido
+    splatAudio.currentTime = 0; // Reiniciar desde el principio
+    
+    splatAudio.play()
+        .then(() => {
+            console.log('🔊 Reproduciendo sonido splat');
+            
+            // Efecto visual opcional en el huevo
+            if (eggGif) {
+                eggGif.style.transform = 'scale(0.95)';
+                eggGif.style.transition = 'transform 0.1s ease';
+                
+                setTimeout(() => {
+                    eggGif.style.transform = 'scale(1)';
+                }, 100);
+            }
+        })
+        .catch(error => {
+            console.error('❌ Error al reproducir splat:', error);
+            showError('Error al reproducir el sonido splat: ' + error.message);
+        });
 }
 
 // ==================== MODAL DE EXPLICACIÓN ====================
@@ -1072,7 +1196,9 @@ window.DEBUG = {
             highlightedPhrasesCount: document.querySelectorAll('.highlighted-phrase').length,
             textLoaded: textContent.length > 0,
             conjuntos: conjuntosData,
-            isExplanationModalOpen: explanationModalOverlay.classList.contains('active')
+            isExplanationModalOpen: explanationModalOverlay.classList.contains('active'),
+            eggGifFound: eggGif !== null,
+            splatAudioLoaded: splatAudio !== null
         });
     },
     
@@ -1123,6 +1249,15 @@ window.DEBUG = {
         }
     },
     
+    testEggClick: () => {
+        if (eggGif) {
+            handleEggClick();
+            console.log('🧪 Simulando click en el huevo');
+        } else {
+            console.log('❌ No se encontró el GIF del huevo para probar');
+        }
+    },
+    
     reloadDocument: () => {
         location.reload();
     }
@@ -1138,10 +1273,12 @@ console.log(`
 • DEBUG.showTextContent() - Ver contenido del texto
 • DEBUG.showPhrasesByConjunto(id) - Ver frases de un conjunto específico
 • DEBUG.openTestExplanation() - Abrir modal de explicación
+• DEBUG.testEggClick() - Probar el sonido del huevo 🥚
 • DEBUG.reloadDocument() - Recargar documento
 
 Ejemplos: 
 • DEBUG.simulateClick(0) - hacer click en la primera frase
 • DEBUG.showPhrasesByConjunto("1") - ver frases del conjunto 1
 • DEBUG.openTestExplanation() - probar modal de explicación
+• DEBUG.testEggClick() - probar el sonido del huevo
 `);
